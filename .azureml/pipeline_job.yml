@@ -7,7 +7,7 @@ inputs:
     type: uri_file
 
 # default compute for every step (optional)
-compute: azureml:cpu-cluster
+compute: azureml:cpu-cluster-wk
 
 # -------------- jobs ------------------
 jobs:
