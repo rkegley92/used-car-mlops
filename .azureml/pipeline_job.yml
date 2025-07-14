@@ -1,3 +1,4 @@
+name: ci_pipeline_run_${{ run_id }}
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 
