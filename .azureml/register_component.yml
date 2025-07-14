@@ -2,7 +2,7 @@ name: register_component
 version: 1
 type: command
 display_name: Register best model
-environment: azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/labels/latest
+environment: 'azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/labels/latest'
 code: ../register
 command: >
   python model_register.py
