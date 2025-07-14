@@ -2,55 +2,37 @@ name: Azure ML CI/CD
 
 on:
   push:
-    branches: [ main ]                # run on every commit to main
-    paths:
-      - '**.py'
-      - '.azureml/**.yml'
-      - '.github/workflows/**.yml'
+    branches: [ "main" ]
 
 jobs:
   build-and-run:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. pull repository content
-    - name: Checkout
+    - name: Checkout repo
       uses: actions/checkout@v4
 
-    # 2. sign in with service-principal
     - name: Azure login
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # 3. install Azure ML CLI
-    - name: Install ML CLI
-      run: |
-        az extension add -n ml -y
-        az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-    # 4. create or update the three components
     - name: Register components
       run: |
-        for comp in dataprep_component.yml train_component.yml register_component.yml
+        for comp in .azureml/dataprep_component.yml .azureml/train_component.yml .azureml/register_component.yml
         do
           az ml component create \
-            --file .azureml/$comp \
+            --file $comp \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --workspace-name ${{ secrets.AZURE_ML_WORKSPACE }}
         done
 
-    # 5. submit a simple pipeline by invoking the train component
     - name: Run pipeline (prep -> train -> register)
       run: |
-        az ml job create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-          --workspace-name ${{ secrets.AZURE_ML_WORKSPACE }} --name ci_pipeline_run \
-          --stream \
-          --file - <<'EOL'
-        $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
-        type: command
-        display_name: ci_pipeline_job
-        command: echo "Pipeline triggered via GitHub Actions"
-        inputs: {}
-        component: azureml:register_component:1
-        EOL
+        az ml job create \
+          --file .azureml/pipeline_job.yml \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --workspace-name ${{ secrets.AZURE_ML_WORKSPACE }} \
+          --set inputs.input_csv=${{ secrets.INPUT_CSV_PATH }} \
+          --name ci_pipeline_run \
+          --stream

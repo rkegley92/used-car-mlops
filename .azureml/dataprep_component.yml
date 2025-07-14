@@ -1,33 +1,20 @@
-# ==========================================================
-#  Data-preparation component
-# ==========================================================
 name: dataprep_component
 version: 1
 type: command
-
 display_name: Data preparation
-environment: >-
-  azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/labels/latest
-code: ../data_prep        # folder that holds data_prep.py
-
+environment: azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/labels/latest
+code: ../data_prep
 command: >
   python data_prep.py
-  --data              ${{inputs.data}}
-  --test_train_ratio  ${{inputs.test_train_ratio}}
-  --train_data        ${{outputs.train_data}}
-  --test_data         ${{outputs.test_data}}
-
-# ------------ INPUTS ---------------------------------------------------------
+  --data ${{inputs.data}}
+  --test_train_ratio ${{inputs.test_train_ratio}}
+  --train_data ${{outputs.train_data}}
+  --test_data  ${{outputs.test_data}}
 inputs:
-  data:
-    type: uri_file
-  test_train_ratio:
-    type: number
-    default: 0.2
-
-# ------------ OUTPUTS --------------------------------------------------------
+  data:              {type: uri_file}
+  test_train_ratio:  {type: number, default: 0.2}
 outputs:
-  train_data:
-    type: uri_folder
-  test_data:
-    type: uri_folder
+  train_data:        {type: uri_folder}
+  test_data:         {type: uri_folder}
+resources:
+  instance_count: 1

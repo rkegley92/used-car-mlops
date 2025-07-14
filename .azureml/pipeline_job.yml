@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: rf_price_prediction_ci
+inputs:
+  input_csv:        {type: uri_file}
+  test_train_ratio: 0.2
+  n_estimators:     50
+  max_depth:        5
+jobs:
+  prep:
+    type: component
+    component: azureml:dataprep_component:1
+    inputs:
+      data:            ${{parent.inputs.input_csv}}
+      test_train_ratio: ${{parent.inputs.test_train_ratio}}
+
+  train:
+    type: component
+    component: azureml:train_component:1
+    inputs:
+      train_data:   ${{parent.jobs.prep.outputs.train_data}}
+      test_data:    ${{parent.jobs.prep.outputs.test_data}}
+      n_estimators: ${{parent.inputs.n_estimators}}
+      max_depth:    ${{parent.inputs.max_depth}}
+
+  register:
+    type: component
+    component: azureml:register_component:1
+    inputs:
+      model: ${{parent.jobs.train.outputs.model_output}}

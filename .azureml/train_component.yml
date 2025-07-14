@@ -1,12 +1,9 @@
-# .azureml/train_component.yml  (exact indent & quotes matter!)
 name: train_component
 version: 1
 type: command
-
 display_name: Train Random-Forest model
-environment: "azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/labels/latest"
-code: ../train          # folder that holds model_train.py
-
+environment: azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/labels/latest
+code: ../train
 command: >
   python model_train.py
   --train_data  ${{inputs.train_data}}
@@ -14,12 +11,12 @@ command: >
   --n_estimators ${{inputs.n_estimators}}
   --max_depth    ${{inputs.max_depth}}
   --model_output ${{outputs.model_output}}
-
 inputs:
   train_data:   {type: uri_folder}
   test_data:    {type: uri_folder}
   n_estimators: {type: number, default: 50}
   max_depth:    {type: number, default: 5}
-
 outputs:
   model_output: {type: mlflow_model}
+resources:
+  instance_count: 1
