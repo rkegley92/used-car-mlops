@@ -27,10 +27,10 @@ jobs:
     component: azureml:train_component:1
     compute:  azureml:cpu-cluster
     inputs:
-      train_data:  ${{parent.jobs.prep.outputs.train_data}}
-      test_data:   ${{parent.jobs.prep.outputs.test_data}}
-      n_estimators:${{parent.inputs.n_estimators}}
-      max_depth:   ${{parent.inputs.max_depth}}
+      train_data:   ${{parent.jobs.prep.outputs.train_data}}
+      test_data:    ${{parent.jobs.prep.outputs.test_data}}
+      n_estimators: ${{parent.inputs.n_estimators}}
+      max_depth:    ${{parent.inputs.max_depth}}
 
   register:
     type: component
