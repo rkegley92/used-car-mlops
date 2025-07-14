@@ -1,24 +1,23 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-name: used_car_price_pipeline            # any name you like
-description: End-to-end prep ➜ train ➜ register pipeline
-# ------------------------------------------------------------------
-# Set your cluster name once here (must exist in your workspace)
-# ------------------------------------------------------------------
-compute: azureml:cpu-cluster             # <-- change if your cluster is named differently
+name: used_car_price_pipeline
+description: End-to-end prep ➜ train ➜ register
+compute: azureml:cpu-cluster      # default cluster for the pipeline
 
-# ---------- pipeline-level inputs ----------
+# --------------------------------------------------
+# Primitive inputs – copy these lines verbatim
+# --------------------------------------------------
 inputs:
   input_csv:
-    type: uri_file                       # registered data asset or remote path
+    type: uri_file
   test_train_ratio:
     type: number
     default: 0.2
   n_estimators:
-    type: number
+    type: integer
     default: 50
   max_depth:
-    type: number
+    type: integer
     default: 5
 
 # ---------- jobs (three command components) ----------
