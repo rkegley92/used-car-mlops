@@ -1,12 +1,8 @@
 # .github/workflows/azureml_pipeline.yml  (excerpt)
 
-- name: Run pipeline (prep → train → register)
-  run: |
-    az ml job create \
-      --file azureml/pipeline_job.yml \
-      --set name=ci_pipeline_run_${{ github.run_number }}
+name: ci_pipeline_run_${{ github.run_id }}
+$schema: https://azuremlschemas.azureedge.net/latest/pipeline.job.schema.json
 
-$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 
 # -------------- pipeline-level data input only --------------
