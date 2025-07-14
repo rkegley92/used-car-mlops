@@ -23,7 +23,7 @@ jobs:
       test_train_ratio: ${{parent.inputs.test_train_ratio}}
 
   train:
-    type: component
+    type: command
     component: azureml:train_component:1
     compute:  azureml:cpu-cluster
     inputs:
@@ -33,7 +33,7 @@ jobs:
       max_depth:    ${{parent.inputs.max_depth}}
 
   register:
-    type: component
+    type: command
     component: azureml:register_component:1
     compute:  azureml:cpu-cluster
     inputs:
