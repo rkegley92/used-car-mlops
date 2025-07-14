@@ -1,11 +1,20 @@
+# ==========================================================
+#  Model-registration component
+# ==========================================================
 name: register_component
 version: 1
 type: command
-display_name: Register best model
-environment: 'azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/labels/latest'
-code: ../register
+
+display_name: Register MLflow model
+environment: >-
+  azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/labels/latest
+code: ../register         # folder that holds model_register.py
+
 command: >
   python model_register.py
   --model ${{inputs.model}}
+
+# ------------ INPUTS ---------------------------------------------------------
 inputs:
-  model: {type: mlflow_model}
+  model:
+    type: mlflow_model
