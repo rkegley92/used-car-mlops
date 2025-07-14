@@ -1,60 +1,40 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 name: used_car_price_pipeline
-description: End-to-end prep ➜ train ➜ register
-compute: azureml:cpu-cluster      # default cluster for the pipeline
+description: End-to-end data prep → train → register
+compute: azureml:cpu-cluster        # pipeline-level default
 
-# --------------------------------------------------
-# Primitive inputs – copy these lines verbatim
-# --------------------------------------------------
+# -------- top-level pipeline inputs --------
 inputs:
-  input_csv:
-    type: uri_file
-  test_train_ratio:
-    type: number
-    default: 0.2
-  n_estimators:
-    type: integer
-    default: 50
-  max_depth:
-    type: integer
-    default: 5
+  input_csv:        {type: uri_file}
+  test_train_ratio: {type: number,  default: 0.2}
+  n_estimators:     {type: integer, default: 50}
+  max_depth:        {type: integer, default: 5}
 
-# ---------- jobs (three command components) ----------
+# -------- jobs (three command components) --------
 jobs:
 
-  # 1 Data-prep step
   prep:
-    type: command
+    type: component
     component: azureml:dataprep_component:1
-    compute: azureml:cpu-cluster         # explicit compute for this step
+    compute:  azureml:cpu-cluster
     inputs:
       data:             ${{parent.inputs.input_csv}}
       test_train_ratio: ${{parent.inputs.test_train_ratio}}
-    outputs:
-      train_data:
-        mode: upload                     # (let Azure ML decide the path)
-      test_data:
-        mode: upload
 
-  # 2 Training step
   train:
-    type: command
+    type: component
     component: azureml:train_component:1
-    compute: azureml:cpu-cluster
+    compute:  azureml:cpu-cluster
     inputs:
       train_data:  ${{parent.jobs.prep.outputs.train_data}}
       test_data:   ${{parent.jobs.prep.outputs.test_data}}
-      n_estimators: ${{parent.inputs.n_estimators}}
-      max_depth:    ${{parent.inputs.max_depth}}
-    outputs:
-      model_output:
-        mode: upload                     # will appear as mlflow_model
+      n_estimators:${{parent.inputs.n_estimators}}
+      max_depth:   ${{parent.inputs.max_depth}}
 
-  # 3 Model-registration step
   register:
-    type: command
+    type: component
     component: azureml:register_component:1
-    compute: azureml:cpu-cluster
+    compute:  azureml:cpu-cluster
     inputs:
       model: ${{parent.jobs.train.outputs.model_output}}
