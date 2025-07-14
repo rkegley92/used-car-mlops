@@ -1,0 +1,12 @@
+name: sklearn-cpu-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - scikit-learn
+  - pandas
+  - numpy
+  - pip
+  - pip:
+    - mlflow
+    - azure-ai-ml

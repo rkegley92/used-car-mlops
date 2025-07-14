@@ -1,0 +1,11 @@
+name: register_component
+version: 1
+type: command
+display_name: Register best model
+environment: azureml:sklearn-cpu-env@latest
+code: ../register
+command: >
+  python model_register.py
+  --model ${{inputs.model}}
+inputs:
+  model: {type: mlflow_model}

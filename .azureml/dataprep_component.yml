@@ -1,0 +1,18 @@
+name: data_prep_component
+version: 1
+type: command
+display_name: Data preparation
+environment: azureml:sklearn-cpu-env@latest
+code: ../data_prep          # folder that holds data_prep.py
+command: >
+  python data_prep.py
+  --data ${{inputs.data}}
+  --test_train_ratio ${{inputs.test_train_ratio}}
+  --train_data ${{outputs.train_data}}
+  --test_data ${{outputs.test_data}}
+inputs:
+  data: {type: uri_file}
+  test_train_ratio: {type: number, default: 0.2}
+outputs:
+  train_data: {type: uri_folder}
+  test_data:  {type: uri_folder}
